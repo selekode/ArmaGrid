@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ArmaGrid</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+  <style>
+    body {
+      font-family: 'Chakra Petch', sans-serif;
+      background-color: #1E2124;
+    }
+  </style>
+</head>
+
+<body class="text-white flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="fixed left-0 top-0 h-full w-64 bg-[#151719] border-r border-gray-700 flex flex-col">
+    <!-- Logo Section -->
+    <div class="flex items-center justify-center mb-6 mt-4 px-4  select-none">
+      <img th:src="@{/images/armagrid-logo-wide.png}" alt="Logo" class="w-full max-w-[180px] select-none">
+    </div>
+
+    <nav class="mt-8 flex flex-col px-6 space-y-4 text-sm select-none">
+      <a th:href="@{/dashboard/}" class="block py-2 px-3 rounded hover:bg-[#1f2226]">Inicio</a>
+      <a th:href="@{/countries/}" class="block py-2 px-3 rounded border-l-4 border-cyan-400 bg-[#1f2226]">Paises</a>
+      <a th:href="@{/comparisons}" class="block py-2 px-3 rounded hover:bg-[#1f2226]">Comparaciones</a>
+      <a th:href="@{/about}" class="block py-2 px-3 rounded hover:bg-[#1f2226]">Acerca de</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 flex-grow px-10 py-12">
+    <div class="max-w-[1000px] mx-auto">
+      <div class="bg-[#2C2F33] rounded-lg shadow-lg p-8 backdrop-blur-md mb-4 border border-gray-700">
+        <h1 class="text-3xl font-bold mb-6 text-cyan-400">Información Militar por Países</h1>
+
+        <form th:action="@{/countries/stats}" method="post" class="mb-8 flex items-center gap-4">
+          <select name="selectedCountryId" class="bg-[#2C2F33] border border-gray-700 rounded px-4 py-2">
+            <option value="">-- País --</option>
+            <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"
+              th:selected="${country.id} == ${selectedCountryId}">
+            </option>
+          </select>
+
+          <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded">
+            Buscar
+          </button>
+        </form>
+
+      </div>
+
+      <div class="bg-[#2C2F33] rounded-lg shadow-lg p-8 backdrop-blur-md mb-4 border border-gray-700">
+        <div th:if="${stats != null}">
+          <h2 class="text-2xl font-bold mb-4 text-cyan-400" th:text="${country.name}"></h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div th:each="info : ${stats}" class="bg-[#1E2124] p-6 rounded shadow border border-gray-700">
+              <h3 class="text-xl font-bold mb-2" th:text="${info.stat_name}"></h3>
+              <p class="text-gray-300" th:text="${info.stat_value}"></p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+      const select = this.querySelector('select[name="selectedCountryId"]');
+      if (!select.value) {
+        event.preventDefault();
+        alert('Por favor, selecciona un país antes de cargar la información.');
+        select.focus();
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>
